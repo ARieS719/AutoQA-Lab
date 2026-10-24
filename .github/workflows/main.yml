@@ -1,0 +1,78 @@
+name: QA Enterprise CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-deploy-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. 拉取最新代码
+        uses: actions/checkout@v4
+
+      - name: 2. 拉起底层数据库与缓存 (MySQL + Redis)
+        run: |
+          docker compose up -d --wait test-db redis-cache
+          echo "底层基础设施容器已就绪！"
+          if [ -d "db_init" ]; then
+            cat db_init/*.sql | docker exec -i automation_mysql mysql -uqa_user -pqa_pass automation_shop || true
+          fi
+
+      - name: 3. 配置 Python 3.11 测试环境
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 4. 安装项目核心依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pytest-cov allure-pytest
+
+      - name: 5. 启动 FastAPI 被测微服务靶场 (后台静默运行)
+        run: |
+          nohup uvicorn mock_server.app:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
+          echo "等待微服务启动并执行数据库索引自检..."
+          sleep 5
+          curl -f http://127.0.0.1:8000/docs || (echo -e "\n服务启动失败，崩溃日志：" && cat server.log && exit 1)
+
+      - name: 6. 执行全链路白盒自动化测试与代码覆盖率门禁 (80%卡点)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+        run: |
+          pytest tests/ --cov=mock_server --cov-report=term-missing --cov-fail-under=80 --alluredir=allure-results
+
+      - name: 7. 测试失败时打印服务端日志 (Troubleshooting)
+        if: failure()
+        run: |
+          echo "========== SERVER.LOG 详情 =========="
+          cat server.log || true
+          cat logs/server_*.log || true
+          echo "====================================="
+
+      - name: 8. 生成 Allure 可视化测试报告
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        id: allure-report
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: 9. 自动部署报告到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
