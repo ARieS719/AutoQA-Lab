@@ -59,16 +59,13 @@ jobs:
           cat logs/server_*.log || true
           echo "====================================="
 
-      - name: 8. 生成并发布 Allure 测试报告到 GitHub Pages
-        uses: simple-elf/allure-report-action@v2
+      - name: 8. 安装 Allure 命令行工具并生成测试报告
         if: always()
-        with:
-          allure_results: allure-results
-          gh_pages: gh-pages
-          allure_report: allure-report
-          auto_generate: true
+        run: |
+          npm install -g allure-commandline --unsafe-perm=true || true
+          allure generate allure-results -o allure-report --clean
 
-      - name: 9. 部署到 GitHub Pages
+      - name: 9. 部署报告到 GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
