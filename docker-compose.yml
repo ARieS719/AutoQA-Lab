@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  # MySQL 数据库服务
+  test-db:
+    image: mysql:8.0
+    container_name: automation_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+      MYSQL_DATABASE: automation_shop
+      MYSQL_USER: qa_user
+      MYSQL_PASSWORD: qa_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - ./mysql_init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # Redis 缓存与锁服务
+  redis-cache:
+    image: redis:7.0
+    container_name: automation_redis
+    ports:
+      - "6379:6379"
+    command: redis-server --requirepass qa_redis_pass
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "qa_redis_pass", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # 监控抓取引擎 Prometheus
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: automation_prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+
+  # 可视化大屏 Grafana
+  grafana:
+    image: grafana/grafana:latest
+    container_name: automation_grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    depends_on:
+      - prometheus
