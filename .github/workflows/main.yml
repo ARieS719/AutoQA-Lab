@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 1. 拉取最新代码
+      - name: 拉取最新代码
         uses: actions/checkout@v4
 
       - name: 2. 拉起底层数据库与缓存 (MySQL + Redis)
@@ -59,20 +59,19 @@ jobs:
           cat logs/server_*.log || true
           echo "====================================="
 
-      - name: 8. 生成 Allure 可视化测试报告
-        uses: simple-elf/allure-report-action@master
+      - name: 8. 生成并发布 Allure 测试报告到 GitHub Pages
+        uses: simple-elf/allure-report-action@v2
         if: always()
-        id: allure-report
         with:
           allure_results: allure-results
           gh_pages: gh-pages
           allure_report: allure-report
-          allure_history: allure-history
+          auto_generate: true
 
-      - name: 9. 自动部署报告到 GitHub Pages
+      - name: 9. 部署到 GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
+          publish_dir: allure-report
