@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Pytest & Coverage & Allure 缓存与报告（严禁提交到Git仓库）
+.pytest_cache/
+.coverage
+htmlcov/
+report/
+allure-results/
+allure-report/
+*.log
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+
+# Environment variables (保护你的大模型 API Key)
+.env
