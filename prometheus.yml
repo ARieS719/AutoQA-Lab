@@ -1,0 +1,8 @@
+global:
+  scrape_interval: 5s # 每 5 秒钟去拉取一次数据
+
+scrape_configs:
+  - job_name: 'qa_mock_server'
+    static_configs:
+      - targets: ['host.docker.internal:8000']
+        # 注意：在 Docker 里访问宿主机的 8000 端口，必须用 host.docker.internal，不能用 127.0.0.1
