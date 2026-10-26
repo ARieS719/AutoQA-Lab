@@ -20,6 +20,7 @@ import os
 import random
 import time
 
+from contextlib import asynccontextmanager
 from typing import Optional
 
 import redis.asyncio as redis
@@ -170,8 +171,8 @@ def load_schema_statements():
     return statements
 
 
-@app.on_event("startup")
 async def ensure_database_schema():
+    """启动自检：建表自愈 + 补齐 created_at 列 + 联合索引（由 lifespan 调用）"""
     logger.info(f"[启动自检] 正在初始化交易数据库表结构 (当前性能模式 PERF_MODE={PERF_MODE})...")
     try:
         conn = get_db_connection()
@@ -495,20 +496,19 @@ async def reset_test_state():
 app.include_router(vehicle_router)
 
 # ============================================================================
-# 10. 后台消费者任务生命周期管理
+# 10. 后台消费者任务生命周期管理（FastAPI lifespan，替代已弃用的 on_event）
 # ============================================================================
 _consumer_tasks = []
 
 
-@app.on_event("startup")
-async def startup_event():
+@asynccontextmanager
+async def lifespan(app):
+    """应用生命周期：启动时建表自愈 + 拉起消费者协程；关闭时优雅取消并释放连接池"""
+    await ensure_database_schema()
     _consumer_tasks.append(asyncio.create_task(mq_consumer_worker()))
     _consumer_tasks.append(asyncio.create_task(webhook_consumer_worker()))
     logger.info("[后台任务] MQ 积分消费者与 Webhook 异步处理器已启动")
-
-
-@app.on_event("shutdown")
-async def shutdown_event():
+    yield
     for task in _consumer_tasks:
         task.cancel()
     # 等待取消真正完成，避免事件循环关闭时出现 "Task was destroyed but it is pending" 告警
@@ -520,3 +520,6 @@ async def shutdown_event():
     # 关闭连接池：TestClient 多次实例化（新事件循环）时避免旧连接跨 loop 复用
     await redis_client.aclose()
     logger.info("[后台任务] 消费者协程已优雅退出")
+
+
+app.router.lifespan_context = lifespan
