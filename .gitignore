@@ -24,6 +24,9 @@ allure-report/
 # Locust 压测 CSV 产物
 perf/
 
+# SQLite 测试残留
+*.db
+
 # IDE & OS
 .vscode/
 .idea/
