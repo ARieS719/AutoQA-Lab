@@ -1,4 +1,0 @@
-2026-10-24 16:43:26.608 | INFO     | mock_server.app:ensure_database_schema:68 - [启动自检] 正在初始化交易数据库表结构 (当前性能模式 PERF_MODE=fast)...
-2026-10-24 16:43:26.620 | INFO     | mock_server.app:ensure_database_schema:94 - [启动自检] 数据库表结构与索引初始化成功！
-2026-10-24 16:43:26.636 | WARNING  | mock_server.app:validation_exception_handler:49 - [安全拦截 422] | 源IP: testclient | 路径: /api/v1/orders | 非法Payload: {'item_name': '', 'qty': -1}
-2026-10-24 16:43:26.872 | INFO     | mock_server.app:batch_create_orders:291 - [造数工厂] 成功批量灌入 5 条数据，耗时 0.003 秒
