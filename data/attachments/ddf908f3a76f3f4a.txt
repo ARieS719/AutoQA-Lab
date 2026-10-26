@@ -1,2 +1,0 @@
-2026-10-26 16:08:14.454 | INFO     | mock_server.app:request_logging_middleware:122 - [访问日志] GET /api/v1/vehicle/cabin/settings/WVWZZZ1JZXW000002 -> 404 | 4.1ms
-2026-10-26 16:08:14.458 | INFO     | mock_server.app:shutdown_event:522 - [后台任务] 消费者协程已优雅退出

@@ -1,2 +1,0 @@
-2026-10-26 16:08:14.337 | WARNING  | mock_server.app:validation_exception_handler:98 - [安全拦截 422] | 源IP: testclient | 路径: /api/v1/vehicle/events | 非法Payload: {'vin': 'SHORT_VIN', 'domain': 'bms', 'event_type': 'X'}
-2026-10-26 16:08:14.337 | INFO     | mock_server.app:request_logging_middleware:122 - [访问日志] POST /api/v1/vehicle/events -> 422 | 1.8ms

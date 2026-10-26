@@ -1,0 +1,49 @@
+2026-10-26 16:19:56.681 | INFO     | mock_server.app:ensure_database_schema:176 - [启动自检] 正在初始化交易数据库表结构 (当前性能模式 PERF_MODE=fast)...
+2026-10-26 16:19:56.692 | INFO     | mock_server.app:ensure_database_schema:201 - [启动自检] 数据库表结构与索引初始化成功！
+2026-10-26 16:19:56.693 | INFO     | mock_server.app:lifespan:510 - [后台任务] MQ 积分消费者与 Webhook 异步处理器已启动
+2026-10-26 16:19:56.708 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /health -> 200 | 11.8ms
+2026-10-26 16:19:56.714 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/login -> 200 | 2.1ms
+2026-10-26 16:19:56.716 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/login -> 401 | 0.8ms
+2026-10-26 16:19:56.721 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders -> 401 | 2.6ms
+2026-10-26 16:19:56.723 | WARNING  | mock_server.app:validation_exception_handler:99 - [安全拦截 422] | 源IP: testclient | 路径: /api/v1/orders | 非法Payload: {'item_name': '', 'qty': -1}
+2026-10-26 16:19:56.724 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders -> 422 | 1.4ms
+2026-10-26 16:19:56.730 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders -> 200 | 4.4ms
+2026-10-26 16:19:56.737 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders/1/cancel -> 200 | 5.3ms
+2026-10-26 16:19:56.741 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders/1/cancel -> 409 | 2.6ms
+2026-10-26 16:19:56.746 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders/1/pay -> 409 | 3.7ms
+2026-10-26 16:19:56.751 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders/999999999/pay -> 404 | 2.4ms
+2026-10-26 16:19:56.754 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders/999999999/cancel -> 404 | 2.3ms
+2026-10-26 16:19:56.760 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders -> 200 | 3.9ms
+2026-10-26 16:19:56.765 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders/2/pay -> 200 | 3.3ms
+2026-10-26 16:19:56.769 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders/2/pay -> 409 | 2.3ms
+2026-10-26 16:19:56.773 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/orders/2/cancel -> 409 | 2.3ms
+2026-10-26 16:19:56.778 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/tools/init-test-stock/sku_cov/1 -> 200 | 3.3ms
+2026-10-26 16:19:56.911 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/seckill/sku_cov -> 200 | 131.4ms
+2026-10-26 16:19:56.965 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/seckill/sku_cov -> 200 | 52.0ms
+2026-10-26 16:19:56.968 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/tools/init-test-stock/sku_cov/1 -> 200 | 1.4ms
+2026-10-26 16:19:56.973 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/seckill/sku_cov -> 200 | 3.7ms
+2026-10-26 16:19:56.975 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/seckill/sku_cov -> 200 | 1.0ms
+2026-10-26 16:19:56.979 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /api/v1/inventory/sku_cov -> 200 | 1.7ms
+2026-10-26 16:19:56.983 | WARNING  | mock_server.app:pay_callback:389 - [Webhook拦截] order_id=ORD_BAD 签名校验失败
+2026-10-26 16:19:56.983 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/webhook/pay_callback -> 200 | 2.6ms
+2026-10-26 16:19:56.985 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/webhook/pay_callback -> 200 | 0.6ms
+2026-10-26 16:19:56.988 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/tools/reset-test-state -> 200 | 1.2ms
+2026-10-26 16:19:56.991 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/webhook/pay_callback -> 200 | 1.4ms
+2026-10-26 16:19:56.994 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /api/v1/order/status/ORDER_WB_ASGI -> 200 | 1.2ms
+2026-10-26 16:19:57.197 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /api/v1/order/status/ORDER_WB_ASGI -> 200 | 1.0ms
+2026-10-26 16:19:57.400 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /api/v1/order/status/ORDER_WB_ASGI -> 200 | 1.1ms
+2026-10-26 16:19:57.603 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /api/v1/order/status/ORDER_WB_ASGI -> 200 | 1.0ms
+2026-10-26 16:19:57.606 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/webhook/pay_callback -> 200 | 1.2ms
+2026-10-26 16:19:57.609 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/tools/reset-test-state -> 200 | 0.8ms
+2026-10-26 16:19:57.612 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/order/ORDER_MQ_ASGI/pay_and_notify -> 200 | 1.4ms
+2026-10-26 16:19:57.614 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /api/v1/user/points/user_888 -> 200 | 1.3ms
+2026-10-26 16:19:57.817 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /api/v1/user/points/user_888 -> 200 | 0.9ms
+2026-10-26 16:19:58.020 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /api/v1/user/points/user_888 -> 200 | 1.0ms
+2026-10-26 16:19:58.113 | INFO     | mock_server.app:mq_consumer_worker:434 - [MQ消费] 订单 ORDER_MQ_ASGI 积分已发放 +100
+2026-10-26 16:19:58.224 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /api/v1/user/points/user_888 -> 200 | 1.0ms
+2026-10-26 16:19:58.226 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] GET /api/v1/user/points/user_unknown -> 200 | 0.9ms
+2026-10-26 16:19:58.233 | INFO     | mock_server.app:batch_create_orders:471 - [造数工厂] 成功批量灌入 5 条数据，耗时 0.003 秒
+2026-10-26 16:19:58.233 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/tools/batch-orders -> 200 | 5.0ms
+2026-10-26 16:19:58.236 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/tools/batch-orders -> 200 | 0.9ms
+2026-10-26 16:19:58.238 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/tools/batch-orders -> 200 | 1.0ms
+2026-10-26 16:19:58.240 | INFO     | mock_server.app:lifespan:522 - [后台任务] 消费者协程已优雅退出

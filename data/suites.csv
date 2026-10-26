@@ -1,69 +1,69 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","24","test_cabin_settings_upsert_idempotent","tests","2026-10-26","passed","2026-10-26","TestCabinSettings","test_vehicle","",""
-"金额被篡改后签名不再匹配，必须 403","5","test_tampered_amount_signature_blocked","tests","2026-10-26","passed","2026-10-26","TestWebhookSecurity","test_security","",""
-"","6","test_create_order_without_token_blocked","tests","2026-10-26","passed","2026-10-26","TestAuthSecurity","test_security","",""
-"","4","test_report_vehicle_event_validation[bad_payload0]","tests","2026-10-26","passed","2026-10-26","TestVehicleEvents","test_vehicle","",""
+"
+        数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
+        断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
+        并校验响应体携带参数校验失败文案。
+        ","3","test_create_order_abnormal_ddt[case1]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
+"","19","test_cabin_settings_upsert_idempotent","tests","2026-10-26","passed","2026-10-26","TestCabinSettings","test_vehicle","",""
+"","19","test_command_lifecycle_with_state_machine_defense","tests","2026-10-26","passed","2026-10-26","TestVehicleCommands","test_vehicle","",""
+"","8","test_report_vehicle_event_success","tests","2026-10-26","passed","2026-10-26","TestVehicleEvents","test_vehicle","",""
+"","5","test_vehicle_command_without_token_blocked","tests","2026-10-26","passed","2026-10-26","TestAuthSecurity","test_security","",""
+"","4","test_create_order_with_forged_token_blocked","tests","2026-10-26","passed","2026-10-26","TestAuthSecurity","test_security","",""
+"","3","test_report_vehicle_event_validation[bad_payload2]","tests","2026-10-26","passed","2026-10-26","TestVehicleEvents","test_vehicle","",""
+"
+    高级自动化测试：验证异步 Webhook 回调能够正确流转订单状态
+    ","633","test_async_payment_webhook","tests","2026-10-26","passed","2026-10-26","","test_async_webhook","",""
 "
     高并发防超卖核心用例：验证 Redis 分布式锁在瞬时并发冲击下确保 0 超卖
-    ","42","test_redis_lock_prevents_overselling","tests","2026-10-26","passed","2026-10-26","","test_concurrency_lock","",""
-"item_name 携带 SQL 注入串：参数化查询保证只被当作普通字符串处理","8","test_sql_injection_in_item_name_is_harmless","tests","2026-10-26","passed","2026-10-26","TestParameterInjection","test_security","",""
-"
-        数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
-        断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
-        并校验响应体携带参数校验失败文案。
-        ","6","test_create_order_abnormal_ddt[case0]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
-"","6","test_vehicle_command_without_token_blocked","tests","2026-10-26","passed","2026-10-26","TestAuthSecurity","test_security","",""
-"","10","test_report_vehicle_event_success","tests","2026-10-26","passed","2026-10-26","TestVehicleEvents","test_vehicle","",""
-"一小时前的历史回调重放，必须 403","5","test_expired_timestamp_replay_blocked","tests","2026-10-26","passed","2026-10-26","TestWebhookSecurity","test_security","",""
-"","25","test_full_order_lifecycle","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
-"同签名同时间戳的重复回调：第一次受理，第二次幂等拦截 403","14","test_duplicate_callback_idempotency_blocked","tests","2026-10-26","passed","2026-10-26","TestWebhookSecurity","test_security","",""
-"
-        数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
-        断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
-        并校验响应体携带参数校验失败文案。
-        ","5","test_create_order_abnormal_ddt[case4]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
-"","23","test_command_lifecycle_with_state_machine_defense","tests","2026-10-26","passed","2026-10-26","TestVehicleCommands","test_vehicle","",""
+    ","41","test_redis_lock_prevents_overselling","tests","2026-10-26","passed","2026-10-26","","test_concurrency_lock","",""
+"","3","test_report_vehicle_event_validation[bad_payload1]","tests","2026-10-26","passed","2026-10-26","TestVehicleEvents","test_vehicle","",""
+"","20","test_full_order_lifecycle","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
 "
         数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
         断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
         并校验响应体携带参数校验失败文案。
         ","4","test_create_order_abnormal_ddt[case2]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
-"","7","test_cabin_settings_missing_record_404","tests","2026-10-26","passed","2026-10-26","TestCabinSettings","test_vehicle","",""
+"
+        数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
+        断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
+        并校验响应体携带参数校验失败文案。
+        ","4","test_create_order_abnormal_ddt[case5]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
+"","3","test_report_vehicle_event_validation[bad_payload3]","tests","2026-10-26","passed","2026-10-26","TestVehicleEvents","test_vehicle","",""
+"","14","test_report_and_query_bms_alerts","tests","2026-10-26","passed","2026-10-26","TestBmsAlerts","test_vehicle","",""
+"使用错误密钥伪造签名，必须 403","4","test_wrong_secret_signature_blocked","tests","2026-10-26","passed","2026-10-26","TestWebhookSecurity","test_security","",""
+"金额被篡改后签名不再匹配，必须 403","4","test_tampered_amount_signature_blocked","tests","2026-10-26","passed","2026-10-26","TestWebhookSecurity","test_security","",""
+"item_name 携带 SQL 注入串：参数化查询保证只被当作普通字符串处理","7","test_sql_injection_in_item_name_is_harmless","tests","2026-10-26","passed","2026-10-26","TestParameterInjection","test_security","",""
+"","4","test_report_vehicle_event_validation[bad_payload0]","tests","2026-10-26","passed","2026-10-26","TestVehicleEvents","test_vehicle","",""
 "
     进程内 ASGI 全分支白盒契约测试：
     采集真实服务端代码覆盖率（CI 覆盖率门禁的核心支撑）。
-    ","1576","test_in_process_full_branches_coverage","tests","2026-10-26","passed","2026-10-26","","test_asgi_coverage","",""
-"","5","test_bms_alert_temperature_boundary","tests","2026-10-26","passed","2026-10-26","TestBmsAlerts","test_vehicle","",""
-"","4854","test_fuzz_create_order","tests","2026-10-26","passed","2026-10-26","TestOrderFuzzing","test_fuzz","",""
+    ","1566","test_in_process_full_branches_coverage","tests","2026-10-26","passed","2026-10-26","","test_asgi_coverage","",""
+"
+    深度灰盒测试：验证基于 MQ 的异步积分发放是否能达到最终一致性
+    ","634","test_mq_eventual_consistency","tests","2026-10-26","passed","2026-10-26","","test_mq_consistency","",""
+"
+        数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
+        断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
+        并校验响应体携带参数校验失败文案。
+        ","4","test_create_order_abnormal_ddt[case0]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
+"","4","test_bms_alert_temperature_boundary","tests","2026-10-26","passed","2026-10-26","TestBmsAlerts","test_vehicle","",""
+"
+        数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
+        断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
+        并校验响应体携带参数校验失败文案。
+        ","4","test_create_order_abnormal_ddt[case3]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
+"","4557","test_fuzz_create_order","tests","2026-10-26","passed","2026-10-26","TestOrderFuzzing","test_fuzz","",""
+"一小时前的历史回调重放，必须 403","4","test_expired_timestamp_replay_blocked","tests","2026-10-26","passed","2026-10-26","TestWebhookSecurity","test_security","",""
+"同签名同时间戳的重复回调：第一次受理，第二次幂等拦截 403","12","test_duplicate_callback_idempotency_blocked","tests","2026-10-26","passed","2026-10-26","TestWebhookSecurity","test_security","",""
+"
+        数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
+        断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
+        并校验响应体携带参数校验失败文案。
+        ","4","test_create_order_abnormal_ddt[case4]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
+"","5","test_execute_nonexistent_command_404","tests","2026-10-26","passed","2026-10-26","TestVehicleCommands","test_vehicle","",""
+"","4","test_create_order_without_token_blocked","tests","2026-10-26","passed","2026-10-26","TestAuthSecurity","test_security","",""
 "
     核心防重用例：10 线程同时对同一订单发起支付，
     断言恰有 1 个 200、9 个 409，且数据库状态为 PAID（杜绝重复扣款）。
-    ","48","test_concurrent_pay_only_one_success","tests","2026-10-26","passed","2026-10-26","","test_pay_idempotency","",""
-"
-        数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
-        断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
-        并校验响应体携带参数校验失败文案。
-        ","5","test_create_order_abnormal_ddt[case1]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
-"","4","test_report_vehicle_event_validation[bad_payload2]","tests","2026-10-26","passed","2026-10-26","TestVehicleEvents","test_vehicle","",""
-"
-        数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
-        断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
-        并校验响应体携带参数校验失败文案。
-        ","5","test_create_order_abnormal_ddt[case5]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
-"
-        数据驱动测试 (DDT)：读取 YAML 中的异常边界值用例，验证网关参数拦截能力。
-        断言升级：精确匹配期望状态码（原先 400/422 混放会掩盖网关行为漂移），
-        并校验响应体携带参数校验失败文案。
-        ","5","test_create_order_abnormal_ddt[case3]","tests","2026-10-26","passed","2026-10-26","TestOrderLifecycle","test_order","",""
-"","4","test_report_vehicle_event_validation[bad_payload1]","tests","2026-10-26","passed","2026-10-26","TestVehicleEvents","test_vehicle","",""
-"","6","test_execute_nonexistent_command_404","tests","2026-10-26","passed","2026-10-26","TestVehicleCommands","test_vehicle","",""
-"","6","test_create_order_with_forged_token_blocked","tests","2026-10-26","passed","2026-10-26","TestAuthSecurity","test_security","",""
-"","17","test_report_and_query_bms_alerts","tests","2026-10-26","passed","2026-10-26","TestBmsAlerts","test_vehicle","",""
-"使用错误密钥伪造签名，必须 403","5","test_wrong_secret_signature_blocked","tests","2026-10-26","passed","2026-10-26","TestWebhookSecurity","test_security","",""
-"","4","test_report_vehicle_event_validation[bad_payload3]","tests","2026-10-26","passed","2026-10-26","TestVehicleEvents","test_vehicle","",""
-"
-    深度灰盒测试：验证基于 MQ 的异步积分发放是否能达到最终一致性
-    ","641","test_mq_eventual_consistency","tests","2026-10-26","passed","2026-10-26","","test_mq_consistency","",""
-"
-    高级自动化测试：验证异步 Webhook 回调能够正确流转订单状态
-    ","634","test_async_payment_webhook","tests","2026-10-26","passed","2026-10-26","","test_async_webhook","",""
+    ","46","test_concurrent_pay_only_one_success","tests","2026-10-26","passed","2026-10-26","","test_pay_idempotency","",""
+"","5","test_cabin_settings_missing_record_404","tests","2026-10-26","passed","2026-10-26","TestCabinSettings","test_vehicle","",""
