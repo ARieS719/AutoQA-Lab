@@ -1,0 +1,3 @@
+2026-10-26 16:08:14.430 | INFO     | mock_server.app:request_logging_middleware:122 - [访问日志] POST /api/v1/vehicle/cabin/settings -> 200 | 6.1ms
+2026-10-26 16:08:14.437 | INFO     | mock_server.app:request_logging_middleware:122 - [访问日志] POST /api/v1/vehicle/cabin/settings -> 200 | 5.1ms
+2026-10-26 16:08:14.444 | INFO     | mock_server.app:request_logging_middleware:122 - [访问日志] GET /api/v1/vehicle/cabin/settings/WVWZZZ1JZXW000001 -> 200 | 4.8ms

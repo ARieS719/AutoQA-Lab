@@ -1,2 +1,0 @@
-2026-10-26 11:11:12.545 | WARNING  | mock_server.app:validation_exception_handler:92 - [安全拦截 422] | 源IP: testclient | 路径: /api/v1/vehicle/bms/alerts | 非法Payload: {'vin': 'LSVAM4187C2184847', 'alert_level': 'HIGH', 'highest_temp': 999}
-2026-10-26 11:11:12.545 | INFO     | mock_server.app:request_logging_middleware:116 - [访问日志] POST /api/v1/vehicle/bms/alerts -> 422 | 1.9ms
