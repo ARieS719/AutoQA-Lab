@@ -16,6 +16,13 @@ report/
 allure-results/
 allure-report/
 *.log
+*.bak
+
+# Hypothesis 模糊测试本地缓存
+.hypothesis/
+
+# Locust 压测 CSV 产物
+perf/
 
 # IDE & OS
 .vscode/

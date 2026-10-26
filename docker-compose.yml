@@ -13,7 +13,9 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./mysql_init:/docker-entrypoint-initdb.d
+      # 修复：原 ./mysql_init 目录不存在，导致初始化 SQL 从未被容器自动执行；
+      # 现挂载真实存在的 db_init 目录，MySQL 首次启动时自动建表建索引
+      - ./db_init:/docker-entrypoint-initdb.d
     command: --default-authentication-plugin=mysql_native_password
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
@@ -53,5 +55,9 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      # 预置 Prometheus 数据源与 QA 压测监控看板，开箱即用
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
     depends_on:
       - prometheus

@@ -1,0 +1,20 @@
+# Docker 构建上下文排除清单（防止密钥与本地产物泄漏进镜像）
+.env
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.hypothesis/
+htmlcov/
+allure-results/
+allure-report/
+perf/
+logs/
+*.log
+.git/
+.gitignore
+.github/
+.vscode/
+.idea/
+requirements_utf8.txt

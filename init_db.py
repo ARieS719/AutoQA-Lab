@@ -1,61 +1,59 @@
+# ============================================================================
+# init_db.py — 数据库初始化脚本（单一事实来源：db_init/*.sql）
+#
+# 用法：
+#   docker compose up -d --wait test-db   # 先拉起 MySQL
+#   python init_db.py                     # 一键执行全部建表 SQL
+#
+# 说明：本脚本与容器 entrypoint、服务启动自愈执行的是同一批 SQL 文件，
+# 避免三处建表逻辑漂移。车联网 6 大核心业务表定义见 db_init/02_vehicle_tables.sql。
+# ============================================================================
+import glob
+import os
+
 import pymysql
 
-# 车企 6 大核心业务表
-table_sqls = [
+from config import settings
+
+
+def load_sql_statements():
+    """读取 db_init 下全部 .sql 并按分号拆分。
+
+    注意：不手工剥离 `--` 注释（MySQL 会把 `-- ` 行注释连同 DDL 一并解析），
+    避免把「注释 + 建表语句」整体误过滤掉。
     """
-    CREATE TABLE IF NOT EXISTS vehicle_events (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        vin VARCHAR(50) NOT NULL,
-        domain VARCHAR(20) NOT NULL,
-        event_type VARCHAR(50) NOT NULL,
-        risk_level VARCHAR(20) NOT NULL,
-        payload JSON,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    """,
-    """
-    CREATE TABLE IF NOT EXISTS vehicle_commands (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        vin VARCHAR(50) NOT NULL,
-        command_type VARCHAR(50) NOT NULL,
-        params JSON,
-        status VARCHAR(20) DEFAULT 'PENDING',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    """,
-    """
-    CREATE TABLE IF NOT EXISTS bms_alerts (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        vin VARCHAR(50) NOT NULL,
-        alert_level VARCHAR(20) NOT NULL,
-        highest_temp FLOAT,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    )
-    """,
-    """
-    CREATE TABLE IF NOT EXISTS cabin_settings (
-        vin VARCHAR(50) PRIMARY KEY,
-        profile_data JSON,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-    )
-    """
-]
+    statements = []
+    for path in sorted(glob.glob(os.path.join("db_init", "*.sql"))):
+        print(f"[init_db] 正在解析: {path}")
+        with open(path, "r", encoding="utf-8") as f:
+            raw = f.read()
+        for stmt in raw.split(";"):
+            stmt = stmt.strip()
+            if stmt:
+                statements.append(stmt)
+    return statements
+
 
 def init_database():
-    print("正在连接 Docker MySQL...")
+    print("正在连接 MySQL (Docker)...")
     try:
         conn = pymysql.connect(
-            host='127.0.0.1', port=3306, user='qa_user', password='qa_pass', database='automation_shop'
+            host=settings.DB_HOST,
+            port=settings.DB_PORT,
+            user=settings.DB_USER,
+            password=settings.DB_PASS,
+            database=settings.DB_NAME,
         )
         with conn.cursor() as cursor:
-            for i, sql in enumerate(table_sqls, 1):
+            for i, sql in enumerate(load_sql_statements(), 1):
                 cursor.execute(sql)
-                print(f"第 {i} 张表同步完成！")
+                print(f"第 {i} 条建表语句执行完成！")
         conn.commit()
         conn.close()
-        print("所有车联网基础核心表已全部创建完毕！")
+        print("所有核心业务表（电商 + 车联网）已全部创建完毕！")
     except Exception as e:
         print(f"数据库连接或执行失败: {e}")
+
 
 if __name__ == "__main__":
     init_database()
