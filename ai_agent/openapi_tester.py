@@ -1,20 +1,24 @@
-import os
 import json
-import requests
+import os
+import sys
+from pathlib import Path
+
+# 直接运行本脚本 (python ai_agent/openapi_tester.py) 时，项目根目录不在 sys.path，
+# 导致 `from config import settings` 失败；此处先行把项目根注入 sys.path。
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+if str(_PROJECT_ROOT) not in sys.path:
+    sys.path.insert(0, str(_PROJECT_ROOT))
+
 import pymysql
+import requests
+
+from langchain_core.messages import HumanMessage, ToolMessage
 from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
-from langchain_core.messages import HumanMessage, ToolMessage
-from dotenv import load_dotenv
 
-load_dotenv()
+from config import settings
 
-BASE_URL = os.getenv("BASE_URL", "http://127.0.0.1:8000")
-DB_HOST = os.getenv("DB_HOST", "127.0.0.1")
-DB_PORT = int(os.getenv("DB_PORT", 3306))
-DB_USER = os.getenv("DB_USER", "qa_user")
-DB_PASS = os.getenv("DB_PASS", "qa_pass")
-DB_NAME = os.getenv("DB_NAME", "automation_shop")
+BASE_URL = settings.BASE_URL
 
 def get_live_api_docs() -> str:
     """动态拉取 FastAPI 实时 OpenAPI (Swagger) 规范"""
@@ -53,8 +57,12 @@ def execute_readonly_sql(sql_query: str) -> str:
     try:
         print(f"\n[SQL 白盒穿透] {sql_query}")
         conn = pymysql.connect(
-            host=DB_HOST, port=DB_PORT, user=DB_USER, password=DB_PASS,
-            database=DB_NAME, cursorclass=pymysql.cursors.DictCursor
+            host=settings.DB_HOST,
+            port=settings.DB_PORT,
+            user=settings.DB_USER,
+            password=settings.DB_PASS,
+            database=settings.DB_NAME,
+            cursorclass=pymysql.cursors.DictCursor,
         )
         with conn.cursor() as cursor:
             cursor.execute(sql_query)
@@ -65,15 +73,15 @@ def execute_readonly_sql(sql_query: str) -> str:
         return f"SQL执行失败: {str(e)}"
 
 def run_production_qa_agent(intent: str):
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    api_key = settings.OPENAI_API_KEY.strip()
     if not api_key:
         print("未检测到 OPENAI_API_KEY，请在 .env 文件中配置后运行。")
         return
 
     os.environ["OPENAI_API_KEY"] = api_key
-    os.environ["OPENAI_API_BASE"] = os.getenv("OPENAI_API_BASE", "https://api.siliconflow.cn/v1")
+    os.environ["OPENAI_API_BASE"] = settings.OPENAI_API_BASE
 
-    llm = ChatOpenAI(model="deepseek-ai/DeepSeek-V3", temperature=0.1)
+    llm = ChatOpenAI(model=settings.LLM_MODEL, temperature=0.1)
     tools = [send_dynamic_http_request, execute_readonly_sql]
     tools_map = {t.name: t for t in tools}
     llm_with_tools = llm.bind_tools(tools)
