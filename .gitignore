@@ -31,3 +31,6 @@ perf/
 
 # Environment variables (保护你的大模型 API Key)
 .env
+
+# 求职素材仅保留在本地，不上传公开仓库
+docs/
