@@ -155,6 +155,8 @@ flowchart LR
 | 混合链路吞吐 | 75 req/s | **151 req/s** | 2 倍 |
 | 超卖率 | 0% | **0%** | 账实一致 |
 
+> 📊 **完整阶梯压测报告**：[PERF_REPORT.md](PERF_REPORT.md) —— 50→500 并发阶梯曲线、扣减/拦截链路分层数据、混合链路过载拐点，及两个真实调优案例（锁竞争风暴、Redis 连接池上限缺陷）。
+
 > 📐 **复现**：环境为 Windows + Docker Desktop（MySQL 8.0 / Redis 7 / FastAPI 单 Worker）。`docker compose up -d` → 启动靶场（默认 fast）→ `locust -f tests/locustfile.py --headless -u 100 -r 10 -t 60s --host http://127.0.0.1:8000` → `PERF_MODE=slow` 重启靶场对照。
 > ⚠️ slow 的 500 是**故意保留的缺陷态**（锁内阻塞 I/O + 无前置拦截），用于复现「优化前」瓶颈，并非服务故障。
 
