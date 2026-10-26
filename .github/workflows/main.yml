@@ -1,0 +1,110 @@
+name: QA Enterprise CI/CD Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+permissions:
+  # gh-pages 分支部署 Allure 报告所需的最小写权限
+  contents: write
+
+concurrency:
+  # 同一分支的新提交自动取消仍在跑的旧流水线，节省 Actions 分钟数
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-deploy-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. 拉取最新代码
+        uses: actions/checkout@v4
+
+      - name: 2. 拉起底层数据库与缓存 (MySQL + Redis)
+        run: |
+          docker compose up -d --wait test-db redis-cache
+          echo "底层基础设施容器已就绪！"
+          # 兜底初始化（容器首次启动时 db_init/*.sql 已由 entrypoint 自动执行，
+          # 此处用 root 账号补跑一遍，覆盖「数据卷已存在、entrypoint 跳过初始化」的场景；
+          # 显式指定 automation_shop 库，避免 02 号 SQL 报 "No database selected"）
+          for f in db_init/*.sql; do
+            docker exec -i automation_mysql mysql -uroot -proot_pass automation_shop < "$f" || true
+          done
+
+      - name: 3. 配置 Python 3.11 测试环境
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: 4. 安装项目核心依赖
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: 5. 代码规范静态门禁 (Ruff Lint)
+        run: |
+          pip install ruff==0.11.10
+          ruff check .
+
+      - name: 6. 启动 FastAPI 被测微服务靶场 (后台静默运行)
+        run: |
+          nohup uvicorn mock_server.app:app --host 0.0.0.0 --port 8000 > server.log 2>&1 &
+          # 用 /health 探针 + 重试循环替代脆弱的 sleep 5：最多等 60 秒
+          for i in $(seq 1 30); do
+            if curl -fs http://127.0.0.1:8000/health > /dev/null; then
+              echo "✅ 微服务已就绪 (第 ${i} 次探测成功)"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "❌ 服务启动失败，崩溃日志："
+          cat server.log
+          exit 1
+
+      - name: 7. 执行全链路白盒自动化测试与代码覆盖率门禁 (80%卡点)
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+        run: |
+          pytest tests/ --cov=mock_server --cov-report=term-missing --cov-fail-under=80 --alluredir=allure-results
+
+      - name: 8. 高并发压测烟雾验证 (Locust Smoke Test)
+        run: |
+          mkdir -p perf
+          # 30 虚拟用户 / 30 秒：验证压测脚本本身可跑 + 靶场在高并发下无异常退出
+          locust -f tests/locustfile.py \
+            --headless \
+            -u 30 -r 10 -t 30s \
+            --host http://127.0.0.1:8000 \
+            --csv perf/smoke --csv-full-history \
+            --exit-code-on-error 1
+
+      - name: 9. 测试失败时打印服务端日志 (Troubleshooting)
+        if: failure()
+        run: |
+          echo "========== SERVER.LOG 详情 =========="
+          cat server.log || true
+          cat logs/server_*.log || true
+          echo "====================================="
+
+      - name: 10. 安装 Allure 命令行工具并生成测试报告
+        if: always()
+        run: |
+          npm install -g allure-commandline --unsafe-perm=true || true
+          if command -v allure > /dev/null 2>&1; then
+            allure generate allure-results -o allure-report --clean
+          else
+            echo "⚠️ allure CLI 安装失败，跳过报告生成"
+          fi
+
+      - name: 11. 部署报告到 GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-report
