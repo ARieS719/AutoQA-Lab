@@ -1,1 +1,0 @@
-2026-10-26 16:20:04.412 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/vehicle/commands/99999999/execute -> 404 | 3.0ms

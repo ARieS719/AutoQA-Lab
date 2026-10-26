@@ -1,0 +1,3 @@
+2026-10-26 16:28:32.315 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/vehicle/commands -> 200 | 5.8ms
+2026-10-26 16:28:32.322 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/vehicle/commands/1/execute -> 200 | 5.6ms
+2026-10-26 16:28:32.327 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/vehicle/commands/1/execute -> 409 | 2.9ms

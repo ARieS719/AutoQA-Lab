@@ -1,0 +1,6 @@
+2026-10-26 16:28:32.254 | INFO     | mock_server.app:ensure_database_schema:176 - [启动自检] 正在初始化交易数据库表结构 (当前性能模式 PERF_MODE=fast)...
+2026-10-26 16:28:32.263 | INFO     | mock_server.app:ensure_database_schema:201 - [启动自检] 数据库表结构与索引初始化成功！
+2026-10-26 16:28:32.263 | INFO     | mock_server.app:lifespan:510 - [后台任务] MQ 积分消费者与 Webhook 异步处理器已启动
+2026-10-26 16:28:32.269 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/login -> 200 | 2.5ms
+2026-10-26 16:28:32.277 | INFO     | mock_server.vehicle:report_vehicle_event:81 - [车联网] VIN=LSVAM4187C2184847 上报事件 BATTERY_TEMP_SAMPLE (风险等级 HIGH)
+2026-10-26 16:28:32.278 | INFO     | mock_server.app:request_logging_middleware:123 - [访问日志] POST /api/v1/vehicle/events -> 200 | 6.0ms
