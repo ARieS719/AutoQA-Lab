@@ -1,0 +1,12 @@
+# Grafana 看板预置：自动加载 /var/lib/grafana/dashboards 下的 JSON 看板
+apiVersion: 1
+
+providers:
+  - name: 'QA Monitoring'
+    orgId: 1
+    folder: 'QA 压测监控'
+    type: file
+    disableDeletion: false
+    updateIntervalSeconds: 10
+    options:
+      path: /var/lib/grafana/dashboards
