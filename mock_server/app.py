@@ -79,6 +79,12 @@ redis_client = redis.Redis(
     port=settings.REDIS_PORT,
     password=settings.REDIS_PASS,
     decode_responses=True,
+    # redis-py 5.x 异步连接池默认上限仅 100：500 并发压测时池耗尽会抛
+    # MaxConnectionsError -> 500。这里按压测上限放大并加超时保护，
+    # 单次 Redis 操作超过 5s 视为异常快速失败，避免请求无限挂起。
+    max_connections=1000,
+    socket_timeout=5,
+    socket_connect_timeout=5,
 )
 
 

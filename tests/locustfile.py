@@ -1,11 +1,12 @@
-# tests/locustfile.py — 高并发压测脚本（Locust）
+# tests/locustfile.py — 高并发压测脚本（Locust，支持阶梯压测与分链路压测）
 #
-# 本版增强：
-#   1. 数据库连接配置统一从 config.py 读取；
-#   2. test_start 钩子新增「秒杀库存预热」：通过靶场工具接口重置秒杀库存，
-#      避免压测一开始库存就耗尽、秒杀链路全部走 Fast-Fail 分支失去锁竞争意义；
-#   3. 重复压测时先清空内存队列，避免旧订单残留导致支付任务命中已支付订单；
-#   4. test_stop 钩子输出压测结论指引。
+# 压测方法论（面向专业压测报告）：
+#   1. 分链路压测：PERF_PROFILE=mixed（混合）| seckill（纯秒杀）| trade（纯交易），
+#      分别度量「扣减链路」「拦截链路」「DB 写链路」的真实能力，互不干扰；
+#   2. 阶梯加压：固定时长，并发从 50 起步逐档抬升，绘制 并发-吞吐-时延 曲线；
+#   3. 库存预热：默认 50000 库存，保证整个压测窗口内 Lua 扣减链路持续受压，
+#      而非几秒耗尽后全走 Fast-Fail 拦截分支（那是另一条链路的度量场景）。
+import os
 import queue
 import random
 
@@ -24,9 +25,13 @@ DB_PASS = settings.DB_PASS
 DB_NAME = settings.DB_NAME
 BASE_URL = settings.BASE_URL
 
-# 秒杀压测预热参数：目标 SKU 与初始库存（保证锁竞争场景有货可抢）
+# 压测模式：mixed（默认混合链路）| seckill（纯秒杀）| trade（纯下单+支付）
+# 用法：$env:PERF_PROFILE="seckill" 后再启动 locust
+PERF_PROFILE = os.getenv("PERF_PROFILE", "mixed")
+
+# 秒杀压测预热参数：目标 SKU 与初始库存（可用 $env:SECKILL_STOCK 覆盖）
 SECKILL_SKU = "sku_1001"
-SECKILL_INIT_STOCK = 500
+SECKILL_INIT_STOCK = int(os.getenv("SECKILL_STOCK", 50000))
 
 # ========================================================
 # 压测全局基建：线程安全内存数据队列
@@ -103,10 +108,11 @@ def on_test_stop(environment, **kwargs):
 
 
 # ========================================================
-# 并发模型 1：核心订单交易链路混合压测 (下单 30% + 支付 70%)
+# 并发模型 1：核心订单交易链路（下单 30% + 支付 70%）
 # ========================================================
 class OrderTestUser(HttpUser):
-    weight = 3
+    # PERF_PROFILE=seckill 时关闭交易用户，专注度量秒杀链路
+    weight = 0 if PERF_PROFILE == "seckill" else 3
     wait_time = between(0.2, 0.8)
 
     def on_start(self):
@@ -155,10 +161,11 @@ class OrderTestUser(HttpUser):
 
 
 # ========================================================
-# 并发模型 2：高并发秒杀与分布式锁争抢压测
+# 并发模型 2：高并发秒杀链路（Lua 原子扣减 / 前置快速拦截）
 # ========================================================
 class SecKillUser(HttpUser):
-    weight = 2
+    # PERF_PROFILE=trade 时关闭秒杀用户，专注度量交易链路
+    weight = 0 if PERF_PROFILE == "trade" else 2
     wait_time = between(0.05, 0.15)
 
     @task
